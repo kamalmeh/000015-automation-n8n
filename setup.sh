@@ -8,7 +8,7 @@ success() { echo "✅ $1"; }
 
 # --- Load and Validate Environment ---
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ENV_FILE="$SCRIPT_DIR/env"
+ENV_FILE="$SCRIPT_DIR/.env"
 [ -f "$ENV_FILE" ] || error_exit ".env file not found in $SCRIPT_DIR"
 . "$ENV_FILE"
 
