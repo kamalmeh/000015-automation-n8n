@@ -49,3 +49,6 @@ build/
 # Database files
 *.sqlite3
 *.db
+
+# n8n specific files
+data/

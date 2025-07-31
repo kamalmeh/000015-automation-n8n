@@ -11,5 +11,6 @@ RUN apk update && \
     jpeg-dev \
     zlib-dev && rm -rf /var/lib/apt/lists/*
 
-COPY scripts /home/node/scripts
+COPY ./scripts /home/node/scripts
+RUN chown -R node:node /home/node
 USER node

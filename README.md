@@ -41,7 +41,8 @@ This project provides a robust, production-ready setup for self-hosting [n8n](ht
 project-root/
 ├── Dockerfile
 ├── docker-compose.yml
-├── env                # Your environment variables file (see below)
+├── .env               # (copied to ~/n8n for Docker Compose variable substitution)
+├── scripts/           # (optional) Custom scripts copied into the container at /home/node/scripts
 ├── setup.sh           # Main setup script
 └── README.md
 ```
@@ -62,14 +63,19 @@ POSTGRES_USER=n8n_user
 POSTGRES_PASS=yourPostgresPassword
 ENCRYPTION_KEY=yourRandomEncryptionKey
 N8N_DATA_DIR=/data/n8n
+N8N_ENV=prod   # Set to local, prod, or uat
 SSL_CERT_PATH=/etc/letsencrypt/live/your.domain.com/fullchain.pem
 SSL_KEY_PATH=/etc/letsencrypt/live/your.domain.com/privkey.pem
+GENERIC_TIMEZONE=Asia/Kolkata
+TZ=Asia/Kolkata
 ```
 - **N8N_USER/N8N_PASS**: Login credentials for n8n
 - **N8N_DOMAIN**: Your domain (must point to this server)
 - **N8N_DATA_DIR**: Must be a mounted, persistent volume (e.g., EBS)
 - **ENCRYPTION_KEY**: Generate a strong random string
-- **SSL_CERT_PATH / SSL_KEY_PATH**: Full paths to your SSL certificate and key for your domain (e.g., Let's Encrypt). These are used in the NGINX config for HTTPS.
+- **N8N_ENV**: Set to `local`, `prod`, or `uat` to define the environment (passed into the container)
+- **SSL_CERT_PATH / SSL_KEY_PATH**: Full paths to your SSL certificate and key for your domain (e.g., Let's Encrypt). Used in the NGINX config for HTTPS.
+- **GENERIC_TIMEZONE / TZ**: Set your timezone for n8n and the container.
 
 ---
 
@@ -105,6 +111,7 @@ SSL_KEY_PATH=/etc/letsencrypt/live/your.domain.com/privkey.pem
      - Validate your environment and files
      - Set up file permissions
      - Configure NGINX as a reverse proxy with SSL
+     - Copy your .env file to the n8n working directory for Docker Compose variable substitution
      - Start n8n using Docker Compose
 
 ---
@@ -113,7 +120,7 @@ SSL_KEY_PATH=/etc/letsencrypt/live/your.domain.com/privkey.pem
 1. Point your domain's DNS to your server's public IP.
 2. Ensure ports 80 and 443 are open.
 3. Mount your persistent storage at the path in `N8N_DATA_DIR`.
-4. Fill out the `env` file with your secrets and settings.
+4. Fill out the `env` file with your secrets and settings (including N8N_ENV, SSL_CERT_PATH, SSL_KEY_PATH, and timezone).
 5. Run `sudo ./setup.sh` from the project root.
 6. Access n8n at `https://your.domain.com`.
 
@@ -122,8 +129,9 @@ SSL_KEY_PATH=/etc/letsencrypt/live/your.domain.com/privkey.pem
 ## Troubleshooting
 - **Missing dependencies:** The script will install Docker, Docker Compose, and NGINX if missing.
 - **Volume not mounted:** The script will exit if your data volume is not mounted.
-- **SSL certificate errors:** Ensure your domain is pointed to the server and certificates exist at `/etc/letsencrypt/live/your.domain.com/`.
+- **SSL certificate errors:** Ensure your domain is pointed to the server and certificates exist at the paths set in `SSL_CERT_PATH` and `SSL_KEY_PATH`.
 - **Permissions issues:** The script sets correct permissions for n8n data directories.
+- **Environment variables not substituted:** Make sure your `.env` file is present and correctly copied to the n8n working directory (`~/n8n/.env`).
 - **Check logs:**
   ```bash
   docker compose logs n8n
@@ -148,6 +156,10 @@ SSL_KEY_PATH=/etc/letsencrypt/live/your.domain.com/privkey.pem
 - **Restart NGINX:**
   ```bash
   sudo systemctl restart nginx
+  ```
+- **Rebuild the image (if you change Dockerfile or scripts):**
+  ```bash
+  cd ~/n8n && docker compose build --no-cache
   ```
 
 ---

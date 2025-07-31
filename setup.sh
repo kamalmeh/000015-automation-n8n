@@ -51,6 +51,9 @@ cp "$SCRIPT_DIR/docker-compose.yml" "$WORK_DIR/"
 cp "$SCRIPT_DIR/Dockerfile" "$WORK_DIR/"
 cd "$WORK_DIR"
 
+# echo "Change network mode to bridge in docker-compose.yml"
+# perl -pi -e "s|network_mode: \"bridge\"|network_mode: \"host\"|g" "$WORK_DIR/docker-compose.yml"
+
 # --- Set Permissions ---
 sudo chown -R 1000:1000 "$N8N_DATA_DIR"
 if [ ! -d "$N8N_DATA_DIR/files" ]
