@@ -47,8 +47,9 @@ mount | grep -q "$N8N_DATA_DIR" || error_exit "Volume not mounted at $N8N_DATA_D
 # --- Prepare n8n Directory ---
 WORK_DIR="$HOME/n8n"
 mkdir -p "$WORK_DIR"
-cp "$SCRIPT_DIR/docker-compose.yml" "$WORK_DIR/"
-cp "$SCRIPT_DIR/Dockerfile" "$WORK_DIR/"
+cp -p "$SCRIPT_DIR/docker-compose.yml" "$WORK_DIR/"
+cp -p "$SCRIPT_DIR/Dockerfile" "$WORK_DIR/"
+cp -ap "$SCRIPT_DIR/scripts" "$WORK_DIR/"
 cd "$WORK_DIR"
 
 # echo "Change network mode to bridge in docker-compose.yml"
