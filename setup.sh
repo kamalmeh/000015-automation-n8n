@@ -97,7 +97,7 @@ sudo systemctl restart nginx
 cp "$ENV_FILE" "$WORK_DIR/.env"
 
 # --- Start n8n ---
-docker compose up --pull always -d --build
+sudo docker compose up --pull always -d --build
 
 # --- Done ---
 success "n8n is now running on: https://${N8N_DOMAIN}"
