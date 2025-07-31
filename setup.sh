@@ -21,12 +21,21 @@ done
 [ ${#MISSING[@]} -eq 0 ] || error_exit "Missing required env vars: ${MISSING[*]}"
 
 # --- Install Dependencies ---
-install_if_missing() {
-  command -v "$1" &>/dev/null || { info "Installing $1..."; sudo apt update && sudo apt install -y "$1"; }
-}
-install_if_missing docker.io
-install_if_missing docker-compose
-install_if_missing nginx
+
+# --- Improved Install Dependencies ---
+MISSING_PKGS=()
+for pkg in docker.io docker-compose nginx; do
+  if ! command -v "${pkg%%.*}" &>/dev/null; then
+    MISSING_PKGS+=("$pkg")
+  fi
+done
+if [ ${#MISSING_PKGS[@]} -ne 0 ]; then
+  info "Installing missing packages: ${MISSING_PKGS[*]}"
+  sudo apt update
+  sudo apt install -y "${MISSING_PKGS[@]}"
+else
+  success "All required packages are already installed."
+fi
 
 # --- Check Data Volume ---
 mount | grep -q "$N8N_DATA_DIR" || error_exit "Volume not mounted at $N8N_DATA_DIR. Please mount your EBS volume."
