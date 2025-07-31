@@ -90,6 +90,9 @@ EOF
 sudo nginx -t || error_exit "NGINX config test failed"
 sudo systemctl restart nginx
 
+# --- Ensure .env is present for Docker Compose variable substitution ---
+cp "$ENV_FILE" "$WORK_DIR/.env"
+
 # --- Start n8n ---
 docker compose up --pull always -d --build
 
