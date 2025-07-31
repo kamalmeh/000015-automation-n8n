@@ -16,7 +16,7 @@ services:
       - N8N_ENCRYPTION_KEY=${ENCRYPTION_KEY}
       - N8N_RUNNERS_ENABLED=true
       - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
-      - WEBHOOK_URL=https://n8np.smiansh.com/
+      - WEBHOOK_URL=https://n8np.${N8N_DOMAIN}/
       - DB_TYPE=postgresdb
       - DB_POSTGRESDB_HOST=${POSTGRES_HOST}
       - DB_POSTGRESDB_PORT=5432
